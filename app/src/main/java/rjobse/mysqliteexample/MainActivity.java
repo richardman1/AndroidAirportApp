@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AirportCursorAdapter airportCursorAdapter;
     HashMap<String, List<Airport>> listChildren;
     List<String> listDataHeader;
+    HashMap<String, List<Airport>> searchChilds = null;
+    List<String> searchHeader = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,11 +103,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 Intent i = new Intent(getApplicationContext(), AirportDetail.class);
-                Log.i("group", Integer.toString(groupPosition));
-                Log.i("child", Integer.toString(childPosition));
-                Log.i("header", listDataHeader.get(groupPosition));
 
-                Airport airport = listChildren.get(listDataHeader.get(groupPosition)).get(childPosition);
+                Airport airport = null;
+                if(searchChilds == null) {
+                     airport = listChildren.get(listDataHeader.get(groupPosition)).get(childPosition);
+                }
+                else{
+                     airport = searchChilds.get(searchHeader.get(groupPosition)).get(childPosition);
+                }
+
                 i.putExtra("airport", airport);
                 startActivity(i);
 
@@ -125,29 +131,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 List<String> tempHeaders = new ArrayList<String>();
                 int textlength = cs.length();
 
-                Iterator it = listChildren.entrySet().iterator();
-                while(it.hasNext()){
-                    Map.Entry pair = (Map.Entry)it.next();
-                    ArrayList<Airport> tempArrayList = (ArrayList<Airport>) pair.getValue();
-                    ArrayList<Airport> matchedArraylist = new ArrayList<Airport>();
-                    _keyvalue = tempArrayList.get(0).getIso_country();
+                if(textlength > 0) {
+                    Iterator it = listChildren.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry pair = (Map.Entry) it.next();
+                        ArrayList<Airport> tempArrayList = (ArrayList<Airport>) pair.getValue();
+                        ArrayList<Airport> matchedArraylist = new ArrayList<Airport>();
+                        _keyvalue = tempArrayList.get(0).getIso_country();
 
-                    for(Airport a: tempArrayList){
-                        if (textlength <= a.getName().length()) {
-                            if (a.getName().toLowerCase().contains(cs.toString().toLowerCase())) {
-                                matchedArraylist.add(a);
+                        for (Airport a : tempArrayList) {
+                            if (textlength <= a.getName().length()) {
+                                if (a.getName().toLowerCase().contains(cs.toString().toLowerCase())) {
+                                    matchedArraylist.add(a);
+                                }
                             }
                         }
-                    }
 
-                    if(matchedArraylist.size() > 0){
-                        tempHeaders.add(_keyvalue);
-                        tempChilds.put(_keyvalue, matchedArraylist);
+                        if (matchedArraylist.size() > 0) {
+                            tempHeaders.add(_keyvalue);
+                            tempChilds.put(_keyvalue, matchedArraylist);
+                        }
                     }
+                    searchChilds = tempChilds;
+                    searchHeader = tempHeaders;
+                    airportCursorAdapter = new AirportCursorAdapter(getApplicationContext(), tempHeaders, tempChilds);
+                    airportListView.setAdapter(airportCursorAdapter);
+                }
+                else{
+                    searchChilds = null;
+                    searchHeader = null;
+                    airportCursorAdapter = new AirportCursorAdapter(getApplicationContext(), listDataHeader, listChildren);
+                    airportListView.setAdapter(airportCursorAdapter);
                 }
 
-                airportCursorAdapter = new AirportCursorAdapter(getApplicationContext(), tempHeaders, tempChilds);
-                airportListView.setAdapter(airportCursorAdapter);
             }
 
             @Override
