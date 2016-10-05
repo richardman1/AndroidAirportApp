@@ -1,5 +1,6 @@
 package rjobse.mysqliteexample;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -95,6 +96,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         airportCursorAdapter = new AirportCursorAdapter(this, listDataHeader, listChildren);
         airportListView.setAdapter(airportCursorAdapter);
+
+        airportListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Intent i = new Intent(getApplicationContext(), AirportDetail.class);
+                Log.i("group", Integer.toString(groupPosition));
+                Log.i("child", Integer.toString(childPosition));
+                Log.i("header", listDataHeader.get(groupPosition));
+
+                Airport airport = listChildren.get(listDataHeader.get(groupPosition)).get(childPosition);
+                i.putExtra("airport", airport);
+                startActivity(i);
+
+                return true;
+            }
+        });
 
 //        airportCursorAdapter.notifyDataSetChanged();
 
