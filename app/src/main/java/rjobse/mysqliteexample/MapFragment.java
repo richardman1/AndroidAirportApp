@@ -125,7 +125,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
         builder.include(airportlatlng);
         LatLngBounds bounds = builder.build();
 
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 20);
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+        int padding = (int) (width * 0.12); // offset from edges of the map 12% of screen
+
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
         this.googleMap.animateCamera(cameraUpdate);
 
 
