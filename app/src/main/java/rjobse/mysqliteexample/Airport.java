@@ -9,6 +9,8 @@ public class Airport implements Serializable {
     private String icao;
     private String name;
     private String iso_country;
+    private double latitude;
+    private double longitude;
 
     public String getIcao() {
         return icao;
@@ -24,6 +26,22 @@ public class Airport implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
     public String getIso_country() { return iso_country; }

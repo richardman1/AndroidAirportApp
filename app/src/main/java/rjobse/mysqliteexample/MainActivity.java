@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             airport.setName(cursor.getString(cursor.getColumnIndex("name")));
             airport.setIcao(cursor.getString(cursor.getColumnIndex("icao")));
             airport.setIso_country(cursor.getString(cursor.getColumnIndex("iso_country")));
+            airport.setLatitude(cursor.getDouble(cursor.getColumnIndex("latitude")));
+            airport.setLongitude(cursor.getDouble(cursor.getColumnIndex("longitude")));
 
             if (!listDataHeader.contains(airport.getIso_country())) {
                 listDataHeader.add(airport.getIso_country());

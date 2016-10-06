@@ -43,6 +43,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
 
     private MapView mapView;
     private GoogleMap googleMap;
+    private Airport airport;
 
 
     private OnFragmentInteractionListener mListener;
@@ -92,8 +93,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
         return view;
     }
 
-    static final LatLng AVANS = new LatLng(51.5719, 4.7683);
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -103,22 +102,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
 
         MapsInitializer.initialize(this.getActivity());
 
+        LatLng airportlatlng = new LatLng(airport.getLatitude(), airport.getLongitude());
+
         // Updates the location and zoom of the MapView
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(AVANS, 13);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(airportlatlng, 13);
         this.googleMap.animateCamera(cameraUpdate);
 
         Marker marker = this.googleMap.addMarker( new MarkerOptions()
-        .position(AVANS)
-        .title("Breda")
-        .snippet("Avans is #1"));
+        .position(airportlatlng)
+        .title(airport.getName())
+        .snippet("nice snippet bruh"));
 
         this.googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
+
         PolygonOptions polygonOptions = new PolygonOptions()
-                .add(new LatLng(51.586662, 4.791969),
-                        new LatLng( 51.584434, 4.793528),
-                        new LatLng( 51.587474, 4.795993),
-                        new LatLng(51.586662, 4.791969));
+                .add(airportlatlng,
+                        new LatLng( 52.30833333, 4.76805555));
+        polygonOptions.geodesic(true);
         this.googleMap.addPolygon(polygonOptions);
     }
 
@@ -190,6 +191,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
         mListener = null;
     }
 
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -203,5 +206,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void setAirport(Airport airport) {
+        this.airport = airport;
     }
 }
