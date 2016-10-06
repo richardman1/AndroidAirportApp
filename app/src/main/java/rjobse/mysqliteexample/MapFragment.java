@@ -139,7 +139,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
         Marker plane = this.googleMap.addMarker( new MarkerOptions().position(baseAirport)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_airplanemode_active_black_24dp)).zIndex(1));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_airplanemode_active_black_24dp)).zIndex(1).anchor((float) 0.5, (float) 0.5));
 
         LatLngInterpolator interpolator = new LatLngInterpolator() {
             @Override
