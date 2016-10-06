@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">MySqLiteExample</string>
+    <string name="app_name">Airports</string>
     <string name="updateButtonText">Update</string>
     <string name="showButtonText">Show</string>
     <string name="group_name">Group Name</string>
-    <string name="api_key">	AIzaSyAjFwTTqBYDHnoub2zDZUxPdXapSh9S9Y8</string>
+    <string name="api_key">AIzaSyCvX5C7cKD8HlIK4DHytIGzdN_4alEmk7Q</string>
 </resources>

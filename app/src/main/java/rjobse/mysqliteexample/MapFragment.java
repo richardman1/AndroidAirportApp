@@ -17,9 +17,19 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
+
+import static java.lang.Math.asin;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.pow;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.toDegrees;
+import static java.lang.Math.toRadians;
 
 
 /**
@@ -102,23 +112,85 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
 
         MapsInitializer.initialize(this.getActivity());
 
+
+        LatLng baseAirport = new LatLng( 52.30833333, 4.76805555);
         LatLng airportlatlng = new LatLng(airport.getLatitude(), airport.getLongitude());
 
         // Updates the location and zoom of the MapView
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(airportlatlng, 13);
+//        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(airportlatlng, 13);
+//        this.googleMap.animateCamera(cameraUpdate);
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(baseAirport);
+        builder.include(airportlatlng);
+        LatLngBounds bounds = builder.build();
+
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 20);
         this.googleMap.animateCamera(cameraUpdate);
+
+
+
 
         Marker marker = this.googleMap.addMarker( new MarkerOptions()
         .position(airportlatlng)
-        .title(airport.getName())
-        .snippet("nice snippet bruh"));
+        .title(airport.getName()));
+
+        this.googleMap.addMarker( new MarkerOptions().position(baseAirport).title("Schiphol Airport")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
+        Marker plane = this.googleMap.addMarker( new MarkerOptions().position(baseAirport)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_airplanemode_active_black_24dp)).zIndex(1));
+
+        LatLngInterpolator interpolator = new LatLngInterpolator() {
+            @Override
+            public LatLng interpolate(float fraction, LatLng from, LatLng to) {
+                // http://en.wikipedia.org/wiki/Slerp
+                double fromLat = toRadians(from.latitude);
+                double fromLng = toRadians(from.longitude);
+                double toLat = toRadians(to.latitude);
+                double toLng = toRadians(to.longitude);
+                double cosFromLat = cos(fromLat);
+                double cosToLat = cos(toLat);
+
+                // Computes Spherical interpolation coefficients.
+                double angle = computeAngleBetween(fromLat, fromLng, toLat, toLng);
+                double sinAngle = sin(angle);
+                if (sinAngle < 1E-6) {
+                    return from;
+                }
+                double a = sin((1 - fraction) * angle) / sinAngle;
+                double b = sin(fraction * angle) / sinAngle;
+
+                // Converts from polar to vector and interpolate.
+                double x = a * cosFromLat * cos(fromLng) + b * cosToLat * cos(toLng);
+                double y = a * cosFromLat * sin(fromLng) + b * cosToLat * sin(toLng);
+                double z = a * sin(fromLat) + b * sin(toLat);
+
+                // Converts interpolated vector back to polar.
+                double lat = atan2(z, sqrt(x * x + y * y));
+                double lng = atan2(y, x);
+                return new LatLng(toDegrees(lat), toDegrees(lng));
+            }
+
+            private double computeAngleBetween(double fromLat, double fromLng, double toLat, double toLng) {
+                // Haversine's formula
+                double dLat = fromLat - toLat;
+                double dLng = fromLng - toLng;
+                return 2 * asin(sqrt(pow(sin(dLat / 2), 2) +
+                        cos(fromLat) * cos(toLat) * pow(sin(dLng / 2), 2)));
+            }
+        };
+
+        MarkerAnimation animation = new MarkerAnimation();
+        animation.animateMarkerToGB(plane, marker.getPosition(), interpolator);
+
+        float x = marker.getZIndex();
 
         this.googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
 
         PolygonOptions polygonOptions = new PolygonOptions()
-                .add(airportlatlng,
-                        new LatLng( 52.30833333, 4.76805555));
+                .add(airportlatlng, baseAirport);
         polygonOptions.geodesic(true);
         this.googleMap.addPolygon(polygonOptions);
     }
