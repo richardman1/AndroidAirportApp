@@ -14,6 +14,7 @@ public class AirportDetail extends AppCompatActivity implements MapFragment.OnFr
     private TextView icao;
     private TextView name;
     private TextView iso_country;
+    private TextView distanceToAmsterdam;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +23,7 @@ public class AirportDetail extends AppCompatActivity implements MapFragment.OnFr
         icao = (TextView) findViewById(R.id.airporticao);
         name = (TextView) findViewById(R.id.airportname);
         iso_country = (TextView) findViewById(R.id.airportiso_country);
+        distanceToAmsterdam = (TextView) findViewById(R.id.airportDistanceToAmsterdam);
 
         Intent i = getIntent();
 
@@ -34,10 +36,35 @@ public class AirportDetail extends AppCompatActivity implements MapFragment.OnFr
         MapFragment fragment =(MapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_b);
 
         fragment.setAirport(airport);
+
+        double distance = distance(airport.getLatitude(), 52.30833333, airport.getLongitude(), 4.76805555, airport.getElevation(), -3);
+
+        double roundedDistance = Math.round(distance*100.0)/100.0;
+        distanceToAmsterdam.setText(Double.toString(roundedDistance));
     }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    public static double distance(double lat1, double lat2, double lon1,
+                                  double lon2, double el1, double el2) {
+
+        final int R = 6371; // Radius of the earth
+
+        Double latDistance = Math.toRadians(lat2 - lat1);
+        Double lonDistance = Math.toRadians(lon2 - lon1);
+        Double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c; // convert to kilometres
+
+        double height = el1 - el2;
+
+        distance = Math.pow(distance, 2) + Math.pow(height, 2);
+
+        return Math.sqrt(distance);
     }
 }

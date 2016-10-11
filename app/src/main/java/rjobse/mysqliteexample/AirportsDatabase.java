@@ -24,7 +24,7 @@ public class AirportsDatabase extends SQLiteAssetHelper {
     public Cursor getAirports() {
         SQLiteDatabase db = getReadableDatabase();
 
-        String query = "SELECT icao, name, iso_country, longitude, latitude FROM airports ORDER BY iso_country";
+        String query = "SELECT icao, name, iso_country, longitude, latitude, elevation FROM airports ORDER BY iso_country";
         Cursor c = db.rawQuery(query, null);
         c.moveToFirst();
 //        db.close();

@@ -127,7 +127,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
 
         int width = getResources().getDisplayMetrics().widthPixels;
         int height = getResources().getDisplayMetrics().heightPixels;
-        int padding = (int) (width * 0.12); // offset from edges of the map 12% of screen
+        int padding = (int) (width * 0.35); // offset from edges of the map 35% of screen
 
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
         this.googleMap.animateCamera(cameraUpdate);

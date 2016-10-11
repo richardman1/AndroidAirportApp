@@ -11,6 +11,15 @@ public class Airport implements Serializable {
     private String iso_country;
     private double latitude;
     private double longitude;
+    private double elevation;
+
+    public double getElevation() {
+        return elevation;
+    }
+
+    public void setElevation(double elevation) {
+        this.elevation = elevation;
+    }
 
     public String getIcao() {
         return icao;
