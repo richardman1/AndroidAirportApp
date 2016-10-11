@@ -40,7 +40,7 @@ public class AirportDetail extends AppCompatActivity implements MapFragment.OnFr
         double distance = distance(airport.getLatitude(), 52.30833333, airport.getLongitude(), 4.76805555, airport.getElevation(), -3);
 
         double roundedDistance = Math.round(distance*100.0)/100.0;
-        distanceToAmsterdam.setText(Double.toString(roundedDistance));
+        distanceToAmsterdam.setText(Double.toString(roundedDistance) + " km");
     }
 
     @Override
